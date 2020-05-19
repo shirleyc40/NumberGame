@@ -1,19 +1,53 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { NavigationContainer } from '@react-navigation/native';
+import HomeScreen from './screens/HomeScreen';
+import InstructionScreen from './screens/InstructionScreen'
+import GameScreen from './screens/GameScreen'
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-    </View>
-  );
+
+
+export default class App extends React.Component {
+  render() {
+    const Stack = createStackNavigator();
+      return (
+        <NavigationContainer>
+          <Stack.Navigator initialRouteName="Home">
+            <Stack.Screen 
+              name="Home" 
+              component={HomeScreen}
+              options={{ headerShown: false }}
+              />
+            <Stack.Screen 
+              name="Instructions" 
+              component={InstructionScreen}
+              options={{
+                title: '',
+                headerStyle: {
+                backgroundColor: '#9B8AB9',
+                borderBottomWidth: 0,
+                elevation: 0
+                }
+              }} />
+            <Stack.Screen 
+              name="Game" 
+              component={GameScreen}
+              options={{
+                title: '',
+                headerStyle: {
+                backgroundColor: '#DFDADA',
+                borderBottomWidth: 1,
+                elevation: 0
+                }
+              }} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      );
+  }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+// const styles = StyleSheet.create({
+//   screen: {
+//     flex: 1
+//   }
+// });
