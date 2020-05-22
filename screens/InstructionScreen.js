@@ -24,7 +24,8 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontSize: 30,
         fontFamily: 'Montserrat-Bold',
-        marginBottom: 30
+        marginBottom: 30,
+        color: 'black'
     },
     text: {
         fontSize: 20,

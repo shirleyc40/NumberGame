@@ -3,13 +3,31 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import HomeScreen from './screens/HomeScreen';
 import InstructionScreen from './screens/InstructionScreen'
-import GameScreen from './screens/GameScreen'
+import GameScreen from './screens/GameScreen';
+import GameOverScreen from './screens/GameOverScreen';
+import {Image} from 'react-native';
+import SplashScreen from 'react-native-splash-screen'
 
 
+function LogoTitle() {
+  return (
+    <Image
+      style={{ width: '90%', height: 50 }}
+      source={require('./assets/Logo-small.png')}
+    />
+  );
+}
 
 export default class App extends React.Component {
-  render() {
+  componentDidMount() {
+    	// do stuff while splash screen is shown
+        // After having done stuff (such as async tasks) hide the splash screen
+        SplashScreen.hide();
+    }
+    render() {
+    
     const Stack = createStackNavigator();
+    
       return (
         <NavigationContainer>
           <Stack.Navigator initialRouteName="Home">
@@ -34,12 +52,21 @@ export default class App extends React.Component {
               component={GameScreen}
               options={{
                 title: '',
+                headerTitle: props => <LogoTitle {...props} /> ,
                 headerStyle: {
-                backgroundColor: '#DFDADA',
-                borderBottomWidth: 1,
-                elevation: 0
+                  backgroundColor: '#DFDADA',
+                  borderBottomWidth: 1,
+                  elevation: 0,
+                  shadowOffset: 0
                 }
               }} />
+            <Stack.Screen 
+              name="GameOver" 
+              component={GameOverScreen}
+              options={{
+                headerShown: false
+                }
+              } />
           </Stack.Navigator>
         </NavigationContainer>
       );

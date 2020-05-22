@@ -1,31 +1,146 @@
-import React, {useState} from 'react';
-import {View, Text, StyleSheet, FlatList} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, FlatList, Keyboard, KeyboardAvoidingView, Text } from 'react-native';
 import TableRow from '../components/TableRow';
+import SmoothPinCodeInput from 'react-native-smooth-pincode-input';
+import AsyncStorage from '@react-native-community/async-storage';
+import { useFocusEffect } from '@react-navigation/native';
 
-const generateRandomNumber = () =>{
-    const num = Math.floor(Math.random() * 1000000);
-    return num;
-}
-const GameScreen = props =>{
-    const number = generateRandomNumber();
+const GameScreen = props => {
+
+    useFocusEffect(
+        React.useCallback(() => {
+          if (props.route.params.newGame) {
+              setUserGuess([]);
+              setRounds(0);
+              props.navigation.setParams({newGame: false})
+          }
+        }, [props.route.params.newGame])
+      );
+    const number = props.route.params.number;
+    let high = props.route.params.highScore;
+    console.log(number);
     const [userGuess, setUserGuess] = useState([]);
+    const [currentGuess, setCurrentGuess] = useState('');
+    const [rounds, setRounds] = useState(0);
+
+    const guessInputHandler = (enteredNum) => {
+        setCurrentGuess(enteredNum);
+    }
+    const doneHandler = (guess) => {
+        Keyboard.dismiss();
+        checkInput(guess);
+        setTimeout(() => setCurrentGuess(''), 1000);
+    }
+    const checkDigits_Pos = (guess) => {
+        var looked = [];
+        var pos = 0;
+        var count = 0;
+        for (var i = 0; i < guess.length; i++) {
+            var char = guess.charAt(i);
+            if (number.includes(char) && !looked.includes(char)) {
+                count++;
+                looked.push(guess.charAt(i));
+            }
+            if (number.charAt(i) === guess.charAt(i)) pos++;
+        }
+        return [count, pos]
+    }
+    const checkInput = (guess) => {
+        setRounds(curRounds => curRounds + 1);
+        if (guess != number) {
+            const data = checkDigits_Pos(guess);
+            const numDigits = data[0];
+            const numPos = data[1];
+            setUserGuess((userGuess) => [...userGuess, { key: Math.random().toString(), number: guess, digits: numDigits, position: numPos }])
+
+        } else {
+            if (rounds+1 < high) high = rounds+1;
+            props.navigation.navigate('GameOver', { rounds: rounds+1, highScore : high });
+        }
+
+    }
     return (
-        <View>
-            <TableRow 
-                number = "Number" 
-                digits = "Digits Correct" 
-                position = "Positions Correct" 
-                color = '#807878'
-                fontColor = 'white'/>
-            <View style = {styles.line}></View>
+        <View style={styles.screen}>
+            <TableRow
+                number="Number"
+                digits="Digits Correct"
+                position="Positions Correct"
+                color='#807878'
+                fontColor='white' />
+            <View style={styles.line}></View>
+            <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : null}
+                style={{ flex: 1 }} >
+                <View style={styles.list}>
+                    <FlatList
+                        data={userGuess}
+                        renderItem={({ item, index }) => (
+                            <View>
+                                <TableRow
+                                    id={item.key}
+                                    number={item.number}
+                                    digits={item.digits}
+                                    position={item.position}
+                                    color={(index == userGuess.length - 1) ? '#C4C4C4' : null}
+                                />
+                                <View style={styles.line}></View>
+                            </View>)
+                        }
+                    />
+
+                    <View style={styles.section}>
+                        <SmoothPinCodeInput
+                            value={currentGuess}
+                            onTextChange={guessInputHandler}
+                            codeLength={6}
+                            onFulfill={doneHandler}
+                        // cellStyle = {{borderColor: 'white', borderWidth: 2}}
+                        // textStyle = {{color: 'white', fontSize: 24}}
+                        />
+                    </View>
+                </View>
+            </KeyboardAvoidingView>
         </View>
     )
 }
 
 const styles = StyleSheet.create({
+    screen: {
+        flex: 1,
+        backgroundColor: '#DFDADA'
+    },
     line: {
         borderBottomWidth: 1
+    },
+    section: {
+        alignItems: 'center',
+        // backgroundColor: '#807878',
+        padding: 10
+    },
+    list: {
+        flexGrow: 1,
+        justifyContent: "flex-end",
     }
 })
 
 export default GameScreen;
+
+// console.log(userGuess);
+    // const storeData = async (value) => {
+    //     try {
+    //       await AsyncStorage.setItem('highScore', value)
+    //     } catch (e) {
+    //       console.log(e)
+    //     }
+    //   }
+    //   const getData = async () => {
+    //     try {
+    //       const value = await AsyncStorage.getItem('highScore')
+    //       if(value !== null) {
+    //         highScore = value;
+    //       }
+    //     } catch(e) {
+    //       // error reading value
+    //     }
+    //   }
+
+    //android:roundIcon="@mipmap/ic_launcher_round"

@@ -20,16 +20,17 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         paddingTop: 16,
         paddingLeft: 16,
-        paddingBottom: 10
+        paddingBottom: 10,
+        justifyContent: 'center'
     },
     col: {
         flex: 1,
-        paddingHorizontal: 16,
-        justifyContent: 'center'
+        // justifyContent: 'space-between',
     },
     text:{
-        fontSize: 15,
-        fontFamily: 'Montserrat'
+        fontSize: 18,
+        fontFamily: 'Montserrat-Bold'
+        
     }
 })
 
