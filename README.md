@@ -9,4 +9,5 @@ To run:
   * react-native run-android 
 
 Note: sometimes, it works to run through Android Studio 
+
 Note: this project was not built on a macbook, so the IOS version might not compile.
