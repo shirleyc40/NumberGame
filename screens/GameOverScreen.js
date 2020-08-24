@@ -3,16 +3,18 @@ import { View, Text, ImageBackground, StyleSheet } from 'react-native';
 import Roundbutton from '../components/Roundbutton';
 
 
-
+// generates random 6 digit number
 const generateRandomNumber = () => {
     const num = Math.floor(Math.random() * 1000000);
     return num.toString();
 };
+
 const GameOverScreen = props => {
-   
+   // navigates to game screen with new number, new game true and highscore
     const newGameHandler = () => {
         props.navigation.navigate('Game', {number: generateRandomNumber(), newGame: true, highScore: props.route.params.highScore})
     }
+    // navigates to home
     const homeHandler = () => {
         props.navigation.navigate('Home', {highScore: props.route.params.highScore})
     } 

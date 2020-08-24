@@ -6,7 +6,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
 
 const GameScreen = props => {
-
+    // if new game, then set to default
     useFocusEffect(
         React.useCallback(() => {
           if (props.route.params.newGame) {
@@ -16,21 +16,28 @@ const GameScreen = props => {
           }
         }, [props.route.params.newGame])
       );
+    // the target number
     const number = props.route.params.number;
+
+    // existing high score
     let high = props.route.params.highScore;
-    console.log(number);
+
     const [userGuess, setUserGuess] = useState([]);
     const [currentGuess, setCurrentGuess] = useState('');
     const [rounds, setRounds] = useState(0);
 
+    // sets the current guess
     const guessInputHandler = (enteredNum) => {
-        setCurrentGuess(enteredNum);
+        setCurrentGuess(enteredNum.replace(/[^0-9]/g, ''));
     }
+
+    // checks the guess and dismisses keyboard, called upon input completion
     const doneHandler = (guess) => {
         Keyboard.dismiss();
         checkInput(guess);
         setTimeout(() => setCurrentGuess(''), 1000);
     }
+    // returns the number of correct digits and correct positions
     const checkDigits_Pos = (guess) => {
         var looked = [];
         var pos = 0;
@@ -45,6 +52,7 @@ const GameScreen = props => {
         }
         return [count, pos]
     }
+    // checks the input for a win, if win then sets the high score and navigates to game over screen
     const checkInput = (guess) => {
         setRounds(curRounds => curRounds + 1);
         if (guess != number) {
@@ -61,13 +69,16 @@ const GameScreen = props => {
     }
     return (
         <View style={styles.screen}>
+        {/* The header of the table */}
             <TableRow
                 number="Number"
                 digits="Digits Correct"
                 position="Positions Correct"
                 color='#807878'
                 fontColor='white' />
+            {/* Divider */}
             <View style={styles.line}></View>
+            {/* Entry display */}
             <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : null}
                 style={{ flex: 1 }} >
                 <View style={styles.list}>
@@ -81,12 +92,13 @@ const GameScreen = props => {
                                     digits={item.digits}
                                     position={item.position}
                                     color={(index == userGuess.length - 1) ? '#C4C4C4' : null}
+                                    entry 
                                 />
                                 <View style={styles.line}></View>
                             </View>)
                         }
                     />
-
+                {/* pin style text input */}
                     <View style={styles.section}>
                         <SmoothPinCodeInput
                             value={currentGuess}
